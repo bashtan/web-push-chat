@@ -1,7 +1,7 @@
 {
   "name": "web-push-chat",
   "version": "1.0.0",
-  "description": "Web push chat throw firebase",
+  "description": "Web push chat through firebase",
   "scripts": {
     "build": "rimraf ./dist && webpack --config webpack.config.production.js && cp -r ./static/* dist/ && cp -r ./dist/* /var/www/web-push-chat",
     "lint": "eslint src; exit 0",

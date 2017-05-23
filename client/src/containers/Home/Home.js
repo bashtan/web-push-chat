@@ -20,7 +20,7 @@ export default class Home extends Component {
   render() {
     return (
       <Wrapper>
-        <Header>Web chat by PUSH API[throw Firebase]</Header>
+        <Header>Web chat by PUSH API[through Firebase]</Header>
         <Registration/>
         <Login/>
         <Messages/>

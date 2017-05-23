@@ -13,8 +13,6 @@ export const StyledLink = styled(Link)`
   }
 `;
 
-
-
 export const CentredElement = styled.div`
   display: flex;
   align-items: center;
@@ -32,4 +30,13 @@ export const Button = styled(CentredElement)`
    &:hover {
     cursor: pointer
   }
+`;
+
+export const FormWrapper = styled.div`
+`;
+
+export const Header = styled.div`
+`;
+
+export const Field = styled.input`
 `;
