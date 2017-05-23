@@ -7,9 +7,11 @@ export default class Messages extends Component {
   }
 
   render() {
+    const {messages} = this.props;
     return (
       <div>
-        Messages
+        <div>Messages</div>
+        <div>{messages ? messages.map(({text, sender})=><div>{`${sender}: ${text}`}</div>): null}</div>
       </div>
     );
   }
