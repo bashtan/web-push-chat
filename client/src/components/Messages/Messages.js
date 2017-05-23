@@ -11,7 +11,7 @@ export default class Messages extends Component {
     return (
       <div>
         <div>Messages</div>
-        <div>{messages ? messages.map(({text, sender})=><div>{`${sender}: ${text}`}</div>): null}</div>
+        <div>{messages ? messages.map(({text, sender})=><div key={sender+text}>{`${sender}: ${text}`}</div>): null}</div>
       </div>
     );
   }

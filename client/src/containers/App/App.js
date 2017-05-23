@@ -14,7 +14,10 @@ export default class App extends Component {
   }
 
   componentDidMount(){
-   // Check support Service Worker API and register.
+    //load messages
+    this.store.getMessages();
+
+    // Check support Service Worker API and register.
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./firebase-messaging-sw.js')
         .then(() => this.store.initializationState());

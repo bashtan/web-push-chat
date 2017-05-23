@@ -6,6 +6,8 @@ import * as firebase from 'firebase';
 class AppState {
   @observable pushAvailable = false;
   @observable pushEnabled = false;
+  @observable messages = [];
+
   app = firebase.initializeApp({
     messagingSenderId: "357322723210"
   });
@@ -13,10 +15,32 @@ class AppState {
   constructor() {
     this.pushEnabled = false;
     this.pushAvailable = false;
+    this.messages = [];
   }
 
   @action subscribe() {
 
+  }
+
+  @action postMessage({user, message}){
+    console.log('message='+message);
+    this.messages.push({ user, message });
+
+    console.log(this.messages)
+  }
+
+  @action getMessages() {
+    this.messages = [{
+      text: "Hello",
+      sender: "user1"
+    }, {
+      text: "Hi",
+      sender: "user2"
+    }, {
+      text: "By",
+      sender: "user3"
+    }
+    ];
   }
 
   sendSubscriptionToServer({ subscription, user, type }) {
