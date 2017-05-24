@@ -1,0 +1,19 @@
+{
+  "name": "web-push-chat-server",
+  "version": "1.0.0",
+  "description": "Web push chat",
+  "scripts": {
+    "server": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "author": "Evgeniy Bashtan.",
+  "homepage": "https://github.com/bashtan",
+  "dependencies": {
+    "axios": "^0.16.1",
+    "body-parser": "^1.17.2",
+    "express": "^4.15.3"
+  }
+}
