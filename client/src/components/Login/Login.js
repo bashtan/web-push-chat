@@ -5,16 +5,29 @@ export default class Login extends Component {
   constructor(props) {
     super(props);
     this.onClick = this.onClick.bind(this);
+    this.onInput = this.onInput.bind(this);
+
+    this.state = {user: ''};
   }
 
-  onClick(){}
+  onInput({currentTarget: {value}}){
+    this.setState({user: value})
+  }
+
+  onClick(){
+    const {onLogin} = this.props;
+    const {user} = this.state;
+
+    onLogin(user);
+  }
 
   render() {
+    const {user} = this.state;
     return (
       <FormWrapper>
         <Header>Login</Header>
-        <Field placeholder="Input your name"></Field>
-        <Button onClick={this.onClick}>Login</Button>
+        <Field onChange={this.onInput} placeholder="Input your name"></Field>
+        <Button enabled={user && user.length > 0} onClick={this.onClick}>Login</Button>
       </FormWrapper>
     );
   }

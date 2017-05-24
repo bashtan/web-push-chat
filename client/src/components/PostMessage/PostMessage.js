@@ -6,6 +6,8 @@ export default class PostMessage extends Component {
     super(props);
     this.onClick = this.onClick.bind(this);
     this.onInput = this.onInput.bind(this);
+
+    this.state = {message: ''};
   }
 
   onInput({currentTarget: {value}}){
@@ -20,11 +22,12 @@ export default class PostMessage extends Component {
   }
 
   render() {
+    const {message} = this.state;
     return (
       <FormWrapper>
         <Header>Post message</Header>
         <Field onChange={this.onInput} placeholder="Input your message"></Field>
-        <Button enabled={true} onClick={this.onClick}>Submit</Button>
+        <Button enabled={message && message.length > 0} onClick={this.onClick}>Submit</Button>
       </FormWrapper>
     );
   }

@@ -18,7 +18,7 @@ export default class Home extends Component {
     this.onPostMessage = this.onPostMessage.bind(this);
 
     this.state = {
-      user: 'userSZZZ'
+      user: 'Unknown user'
     }
   }
 
@@ -30,19 +30,18 @@ export default class Home extends Component {
     this.setState({user});
   }
 
-  onPostMessage(message){
-    const {user} = this.state;
-    console.log(message)
-    this.store.postMessage({user, message});
+  onPostMessage(text){
+    const {user: sender} = this.state;
+    this.store.postMessage({sender, text});
   }
 
   render() {
-    const { messages } = this.store;
+    const { messages, totalMessages } = this.store;
 
-    console.log('messages', messages);
     return (
       <Wrapper>
         <Header>Web chat by PUSH API[through Firebase]</Header>
+        <Header>{`Total messages: ${totalMessages}`}</Header>
         <Registration onRegistration={this.onRegistration}/>
         <Login onLogin={this.onLogin}/>
         <Messages messages={messages}/>

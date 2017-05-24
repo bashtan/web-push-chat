@@ -1,7 +1,7 @@
-import { observable, action } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import axios from 'axios';
 import * as firebase from 'firebase';
-
+import {v4} from 'uuid';
 
 class AppState {
   @observable pushAvailable = false;
@@ -22,25 +22,32 @@ class AppState {
 
   }
 
-  @action postMessage({user, message}){
-    console.log('message='+message);
-    this.messages.push({ user, message });
+  @action postMessage({sender, text}){
+    this.messages.push({
+      id: v4(),
+      sender,
+      text
+    });
+  }
 
-    console.log(this.messages)
+  @computed get totalMessages() {
+    return this.messages.length;
   }
 
   @action getMessages() {
     this.messages = [{
+      id: v4(),
       text: "Hello",
       sender: "user1"
     }, {
+      id: v4(),
       text: "Hi",
       sender: "user2"
     }, {
+      id: v4(),
       text: "By",
       sender: "user3"
-    }
-    ];
+    }];
   }
 
   sendSubscriptionToServer({ subscription, user, type }) {
