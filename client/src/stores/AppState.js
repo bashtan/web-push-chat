@@ -1,7 +1,7 @@
 import { observable, action, computed } from 'mobx';
 import axios from 'axios';
 import * as firebase from 'firebase';
-import {v4} from 'uuid';
+import { v4 } from 'uuid';
 
 const DENIED = 'DENIED';
 const ALLOWED = 'ALLOWED';
@@ -14,6 +14,7 @@ class AppState {
   @observable messages = [];
   @observable users = [];
   @observable allowMessages = UNKNOWN;
+  @observable currentToken = '';
 
   app = firebase.initializeApp({
     messagingSenderId: "357322723210"
@@ -23,18 +24,30 @@ class AppState {
     this.pushEnabled = false;
     this.pushAvailable = false;
     this.messages = [];
+    this.users = [];
+    this.currentToken = '';
+    this.allowMessages = UNKNOWN;
   }
 
-  @action subscribe() {
+  @action postMessage({ sender, text }) {
+    axios.post('/api/message', {
+      token: this.currentToken,
+      sender: sender,
+      message: text
+    })
+      .then((res) => {
+        console.log('success send', res);
+      })
+      .catch(e => {
+        console.log('error send', e);
+      });
 
-  }
 
-  @action postMessage({sender, text}){
-    this.messages.push({
-      id: v4(),
-      sender,
-      text
-    });
+    // this.messages.push({
+    //   id: v4(),
+    //   sender,
+    //   text
+    // });
   }
 
   @computed get totalMessages() {
@@ -54,7 +67,8 @@ class AppState {
       id: v4(),
       text: "By",
       sender: "user3"
-    }];
+    }
+    ];
   }
 
   sendSubscriptionToServer({ subscription, user, type }) {
@@ -66,10 +80,10 @@ class AppState {
   }
 
   @action initializationState() {
-    this.app.messaging().onTokenRefresh(()=> {
+    this.app.messaging().onTokenRefresh(() => {
       messaging.getToken()
         .then(refreshedToken => {
-          console.log('Token refreshed. '+ refreshedToken);
+          console.log('Token refreshed. ' + refreshedToken);
         })
         .catch(err => {
           console.log('Unable to retrieve refreshed token ', err);
@@ -85,14 +99,14 @@ class AppState {
     this.requestPermission();
   }
 
-  requestPermission(){
+  requestPermission() {
     return this.app.messaging().requestPermission()
       .then(() => {
         this.allowMessages = ALLOWED;
         this.getToken()
       })
-      .catch(({code = 'unknown'}) => {
-        if(code === 'messaging/permission-blocked')
+      .catch(({ code = 'unknown' }) => {
+        if (code === 'messaging/permission-blocked')
           this.allowMessages = DENIED;
         else
           this.allowMessages = ERROR;
@@ -101,9 +115,21 @@ class AppState {
 
   getToken() {
     this.app.messaging().getToken()
-      .then(currentToken => {
-        if (currentToken) {
-          console.log('Got FCM device token:', currentToken);
+      .then(token => {
+        if (token) {
+          console.log('Token: ', token);
+          //send token to server
+          axios.post('/api/subscribe', {
+            token
+          })
+            .then(({ data: { users = [] } }) => {
+              this.currentToken = token;
+              this.users = users;
+            })
+            .catch(e => {
+              this.allowMessages = ERROR;
+              console.error('Error subscribe', e);
+            });
         } else {
           console.log('Need to request permissions');
           // Need to request permissions to show notifications.
@@ -111,6 +137,7 @@ class AppState {
         }
       })
       .catch(error => {
+        this.allowMessages = ERROR;
         console.error('Unable to get messaging token.', error);
       });
   }

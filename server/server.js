@@ -8,6 +8,13 @@ const HOST = 'http://localhost';
 const STATIC = '../client/dist';
 const PORT = 3001;
 
+let users = [];
+
+const addUser = user => {
+  const existUser = users.find(({token}) => token === user);
+  if(!existUser) users.push({token: user, name: 'unknown user'});
+};
+
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, STATIC)));
@@ -24,10 +31,11 @@ app.listen(PORT, () => {
 });
 
 app.post('/api/subscribe', (request, response)=>{
-  const {subscription, user, type} = request.body;
-  console.log(subscription);
-  console.log(`${type}: ${user}, [${subscription.endpoint}]`);
-
-  response.write(JSON.stringify({ok: true, user}));
+  const {token} = request.body;
+  console.log(token);
+  addUser(token);
+  response.write(JSON.stringify({ok: true, users}));
   response.end();
 });
+
+//message
