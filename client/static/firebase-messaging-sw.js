@@ -9,11 +9,10 @@ firebase.initializeApp({
   'messagingSenderId': '357322723210'
 });
 
-firebase.messaging().setBackgroundMessageHandler(payload => {
-  // Customize notification here
-  const notificationTitle = 'Background Notification!';
+firebase.messaging().setBackgroundMessageHandler(({ data: { text, sender } }) => {
+  const notificationTitle = sender;
   const notificationOptions = {
-    body: payload.data.message
+    body: text
   };
 
   return self.registration.showNotification(notificationTitle,
