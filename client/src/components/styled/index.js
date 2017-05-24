@@ -33,6 +33,9 @@ export const Button = styled(CentredElement)`
 `;
 
 export const FormWrapper = styled.div`
+  box-shadow: 1px 2px 12px 1px rgba(255,199,156,1);
+  padding: 20px;
+  box-sizing: border-box;
 `;
 
 export const Header = styled.div`

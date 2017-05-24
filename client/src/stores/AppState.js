@@ -3,10 +3,17 @@ import axios from 'axios';
 import * as firebase from 'firebase';
 import {v4} from 'uuid';
 
+const DENIED = 'DENIED';
+const ALLOWED = 'ALLOWED';
+const UNKNOWN = 'UNKNOWN';
+const ERROR = 'ERROR';
+
 class AppState {
   @observable pushAvailable = false;
   @observable pushEnabled = false;
   @observable messages = [];
+  @observable users = [];
+  @observable allowMessages = UNKNOWN;
 
   app = firebase.initializeApp({
     messagingSenderId: "357322723210"
@@ -69,20 +76,27 @@ class AppState {
         });
     });
 
-    this.app.messaging().requestPermission()
-      .then(() => {
-        console.log('Notification permission granted.');
-        this.getToken()
-      })
-      .catch(err => {
-        console.log('Unable to get permission to notify.', err);
-      });
-
     this.app.messaging().onMessage(payload => {
       new Notification('Notification!', {
         body: payload.data.message,
       });
     });
+
+    this.requestPermission();
+  }
+
+  requestPermission(){
+    return this.app.messaging().requestPermission()
+      .then(() => {
+        this.allowMessages = ALLOWED;
+        this.getToken()
+      })
+      .catch(({code = 'unknown'}) => {
+        if(code === 'messaging/permission-blocked')
+          this.allowMessages = DENIED;
+        else
+          this.allowMessages = ERROR;
+      });
   }
 
   getToken() {
@@ -91,8 +105,9 @@ class AppState {
         if (currentToken) {
           console.log('Got FCM device token:', currentToken);
         } else {
+          console.log('Need to request permissions');
           // Need to request permissions to show notifications.
-          this.initializationState();
+          this.requestPermission();
         }
       })
       .catch(error => {
